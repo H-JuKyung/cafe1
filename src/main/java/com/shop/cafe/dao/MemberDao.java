@@ -3,6 +3,7 @@ package com.shop.cafe.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.shop.cafe.dto.Member;
 
-@Repository
+@Repository // @Component 와 같음
 public class MemberDao {
 	
 	@Value("${spring.datasource.driver-class-name}")
@@ -24,8 +25,26 @@ public class MemberDao {
 	
 	@Value("${spring.datasource.password}")
 	private String DB_PW;
+
+	public Member login(Member m) throws Exception {
+		Class.forName(DB_DRIVER);
+		String sql = "select * from member where email='" + m.getEmail() + "' and pw='" + m.getPw() +"' "; //문자열이기 때문에 ' ' 추가
+		try(
+			Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PW);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql)
+				) {
+			if(rs.next()) { // login ok
+				String nickname = rs.getString("nickname");
+				m.setNickname(nickname); // Member 객체에 닉네임을 채워줌
+				return m;
+			} else {
+				return null;
+			}
+		}
+	}
 	
-	public void insertMember(Member m) throws Exception{
+	public void insertMember(Member m) throws Exception {
 		Class.forName(DB_DRIVER);
 		String sql = "insert into member(nickname, pw, email) values(?, ?, ?)";
 		try(

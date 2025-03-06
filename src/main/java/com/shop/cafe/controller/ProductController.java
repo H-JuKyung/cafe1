@@ -11,7 +11,7 @@ import com.shop.cafe.dto.Product;
 import com.shop.cafe.service.ProductService;
 
 @RestController
-@CrossOrigin("http://127.0.0.1:5500")
+//@CrossOrigin("http://127.0.0.1:8080")
 public class ProductController {
 	
 	@Autowired // DI
@@ -20,7 +20,6 @@ public class ProductController {
 	@GetMapping("getAllProducts")
 	public List<Product> getAllProducts() {
 		try { // Exception이 났을 때 return 값을 어떻게 전략을 짤지 하려고 try-catch 문 사용
-			System.out.println("getAllProducts 실행됨");
 			return productService.getAllProducts();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
